@@ -47,3 +47,10 @@
     - Alteração de `Blinkeeng` para `Btinkeeng` em todas as ocorrências (layout web e impressão).
 - **Status**: Commit e Push imediato para sincronização de produção.
 
+## [REFINEMENT] 2026-04-22 17:40 (UTC+2)
+- **Ação**: Atualização de datas de experiência profissional.
+- **Arquivos**: `cv.final.html`.
+- **Modificações**:
+    - Alteração do término do cargo na Btinkeeng de `Present` para `Oct 2024` em todas as línguas e seção de impressão.
+- **Status**: Commit e Push para `master`.
+
