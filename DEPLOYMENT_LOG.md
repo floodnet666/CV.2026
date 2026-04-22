@@ -40,3 +40,10 @@
 - **Status**: Commit e Push para `master`.
 - **Integridade**: Zero Bloat mantido. Documentação agora rastreada para transparência estrutural.
 
+## [HOTFIX] 2026-04-22 17:37 (UTC+2)
+- **Ação**: Correção de erro ortográfico no nome da empresa.
+- **Arquivos**: `cv.final.html`.
+- **Modificações**:
+    - Alteração de `Blinkeeng` para `Btinkeeng` em todas as ocorrências (layout web e impressão).
+- **Status**: Commit e Push imediato para sincronização de produção.
+
