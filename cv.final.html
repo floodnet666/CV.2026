@@ -126,7 +126,23 @@
         }
 
         #hero-particle-canvas {
-            touch-action: none;
+            touch-action: auto;
+        }
+
+        html.lenis {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
         }
     </style>
 </head>
@@ -411,6 +427,23 @@
                 mouse.y = e.clientY - rect.top;
             });
 
+            canvas.addEventListener('touchstart', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.touches[0].clientX - rect.left;
+                mouse.y = e.touches[0].clientY - rect.top;
+            }, { passive: true });
+
+            canvas.addEventListener('touchmove', (e) => {
+                const rect = canvas.getBoundingClientRect();
+                mouse.x = e.touches[0].clientX - rect.left;
+                mouse.y = e.touches[0].clientY - rect.top;
+            }, { passive: true });
+
+            canvas.addEventListener('touchend', () => {
+                mouse.x = -1000;
+                mouse.y = -1000;
+            });
+
             canvas.addEventListener('mouseleave', () => {
                 mouse.x = -1000;
                 mouse.y = -1000;
@@ -645,8 +678,12 @@
         // --- INIT LIBRARIES ---
         gsap.registerPlugin(ScrollTrigger);
         const lenis = new Lenis({ duration: 1.2, smooth: true });
-        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-        requestAnimationFrame(raf);
+        
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time) => {
+            lenis.raf(time * 1000);
+        });
+        gsap.ticker.lagSmoothing(0);
 
         // --- THREE.JS BACKGROUND ---
         const scene = new THREE.Scene();
