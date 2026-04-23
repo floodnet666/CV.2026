@@ -209,10 +209,76 @@
                 size: A4;
             }
         }
+        #preloader-scan {
+            animation: scanMove 4s linear infinite;
+        }
+
+        @keyframes scanMove {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        .glitch-active {
+            animation: textGlitch 0.2s infinite;
+        }
+
+        @keyframes textGlitch {
+            0% { transform: skewX(0deg); filter: blur(0px); }
+            20% { transform: skewX(-20deg); filter: blur(1px); }
+            40% { transform: skewX(20deg); }
+            60% { transform: skewX(-10deg); }
+            100% { transform: skewX(0deg); }
+        }
     </style>
 </head>
 
 <body class="antialiased">
+
+    <!-- Technical Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[9999] bg-[#050505] flex flex-col items-center justify-center font-mono text-white overflow-hidden">
+        <!-- Scanning Line Effect -->
+        <div id="preloader-scan" class="absolute left-0 w-full h-[1px] bg-[#FF2222]/20 z-10 pointer-events-none"></div>
+
+        <div class="relative">
+            <div id="preloader-percent" class="text-[80px] md:text-[120px] font-black tracking-tighter leading-none relative">
+                <span id="percent-val">0</span><span class="text-zinc-800 text-[30px] md:text-[40px] ml-2">%</span>
+            </div>
+            
+            <div class="absolute -bottom-8 left-0 w-full flex justify-between text-[8px] tracking-[0.4em] text-zinc-500 uppercase">
+                <span>Initializing Core</span>
+                <span>v1.2.0</span>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="mt-24 w-64 h-[2px] bg-zinc-900 overflow-hidden relative">
+            <div id="preloader-bar" class="h-full bg-[#FF2222]" style="width: 0%"></div>
+        </div>
+
+        <!-- Technical Logs -->
+        <div class="mt-8 flex flex-col items-center gap-2 text-[8px] font-mono text-zinc-600 uppercase tracking-widest">
+            <div class="flex gap-4">
+                <span>Memory: OK</span>
+                <span>Sync: OK</span>
+                <span>Assets: OK</span>
+            </div>
+            
+            <div class="h-4 overflow-hidden relative w-64 text-center">
+                <div id="preloader-logs" class="flex flex-col gap-1 transition-transform duration-100 ease-linear">
+                    <span>Loading Kernel...</span>
+                    <span>Initializing UI Hardware...</span>
+                    <span>Fetching Assets from Universe...</span>
+                    <span>Compiling Space Shaders...</span>
+                    <span>Establishing Neural Link...</span>
+                    <span>Mapping BI Architectures...</span>
+                    <span>Deploying AI Models...</span>
+                </div>
+            </div>
+
+            <div class="animate-pulse">System Ready</div>
+        </div>
+    </div>
+
 
     <div id="web-experience">
         <div class="noise-overlay"></div>
@@ -392,7 +458,7 @@
             </div>
         </section>
 
-        <section class="h-[70vh] flex flex-col items-center justify-center text-center relative px-6 z-20" id="contact">
+        <section class="min-h-screen flex flex-col items-center justify-center text-center relative px-6 z-20" id="contact">
             <h2 class="text-4xl md:text-7xl font-display font-bold uppercase mb-8" data-i18n="cta_title">Pronto a
                 innovare?</h2>
             <p class="text-gray-400 mb-12 max-w-xl mx-auto" data-i18n="cta_text">La trasformazione digitale non aspetta.
@@ -865,8 +931,67 @@
             });
         }
 
-        // Start App
-        window.onload = () => setLang('it');
+        // Start App with Preloader
+        window.onload = () => {
+            const percentVal = document.getElementById('percent-val');
+            const preloaderBar = document.getElementById('preloader-bar');
+            const preloaderPercent = document.getElementById('preloader-percent');
+            const preloaderLogs = document.getElementById('preloader-logs');
+            let width = 0;
+
+            // Simulação de carregamento técnico
+            const loadingInterval = setInterval(() => {
+                // Incrementos aleatórios para parecer um sistema real
+                width += Math.floor(Math.random() * 8) + 2;
+                
+                if (width >= 100) {
+                    width = 100;
+                    clearInterval(loadingInterval);
+                    finishLoading();
+                }
+
+                // Atualiza UI
+                percentVal.innerText = width;
+                preloaderBar.style.width = width + '%';
+                
+                // Efeito de log rolando
+                gsap.to(preloaderLogs, { y: -(width % 7) * 12, duration: 0.1 });
+
+                // Raramente adiciona um glitch visual
+                if (Math.random() > 0.9) {
+                    preloaderPercent.classList.add('glitch-active');
+                    setTimeout(() => preloaderPercent.classList.remove('glitch-active'), 150);
+                }
+
+            }, 80);
+
+            function finishLoading() {
+                // Timeline final do preloader
+                const tl = gsap.timeline({
+                    onComplete: () => {
+                        document.getElementById('preloader').remove();
+                        // CHAMA A SUA Lógica ORIGINAL DE IDIOMA E ANIMAÇÃO
+                        setLang('it'); 
+                    }
+                });
+
+                tl.to('#preloader-percent, #preloader-bar, .animate-pulse', {
+                    opacity: 0,
+                    y: -20,
+                    duration: 0.5,
+                    stagger: 0.1
+                })
+                .to('#preloader', {
+                    y: '-100%',
+                    opacity: 0,
+                    duration: 1.2,
+                    ease: "expo.inOut"
+                }, "-=0.2");
+                
+                // Ativa o HeroSubtitle um pouco antes do preloader sumir totalmente
+                tl.to('#hero-subtitle-box', { opacity: 1, duration: 1 }, "-=0.5");
+            }
+        };
     </script>
 </body>
 
